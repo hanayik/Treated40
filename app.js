@@ -119,57 +119,26 @@ autoUpdater.on('update-available', function(){
   console.log('update available, downloading now')
   var dialogOptions = {
     type: "question",
-    buttons: ["Cancel, Install"],
-    defaultId: 0,
+    buttons: ["Cancel", "Install"],
+    defaultId: 1,
     title: "Install Update",
-    message: "Would you like to install the latest version now? If so, the app will download the new version and update itself. It will take a few min, depending on your network connection.",
-    cancelId: 1
+    message: "Would you like to install the latest version now? If so, the app will download the new version and update itself. It will take a few minutes, depending on your network connection.",
+    cancelId: 0
   }
-
   dialog.showMessageBox(mainWindow, dialogOptions , function (response) {
     updateResponse = response
-    if (response == 0) {
+    if (response == 1) {
 
     }
   })
-//   const availableNotification = notifier.notify('', {
-//     message: "Update available. Downloading in the background now",
-//     buttons: ['Ok'],
-//     duration: 4000,
-//     icon: path.join(__dirname, 'icon.png')
-//   })
-//   availableNotification.on('buttonClicked', (text) => {
-//     console.log(text)
-//     availableNotification.close()
-//   })
-//   availableNotification.on('clicked', () => {
-//     availableNotification.close()
-//   })
-// })
+})
 autoUpdater.on('update-not-available', function(){
   console.log('update not available')
 })
 autoUpdater.on('update-downloaded', function(){
-  if (updateResponse == 0) {
+  if (updateResponse == 1) {
     autoUpdater.quitAndInstall()
   }
-  // console.log('update downloaded')
-  // const updateNotification = notifier.notify('', {
-  //   message: "Update downloaded!",
-  //   buttons: ['Install', 'Cancel'],
-  //   duration: 20000,
-  //   icon: path.join(__dirname, 'icon.png')
-  // })
-  // updateNotification.on('buttonClicked', (text) => {
-  //   console.log(text)
-  //   if (text === 'Install') {
-  //     autoUpdater.quitAndInstall()
-  //   }
-  //   updateNotification.close()
-  // })
-  // updateNotification.on('clicked', () => {
-  //   updateNotification.close()
-  // })
 })
 
 // In this file you can include the rest of your app's specific main process
