@@ -16,6 +16,7 @@ const autoUpdater = electron.autoUpdater
 const os = require("os");
 var platform = os.platform() + '_' + os.arch();
 var version = app.getVersion();
+var updateResponse
 app.setName("Treated40")
 //icon credit: http://www.flaticon.com/authors/madebyoliver
 // Keep a global reference of the window object, if you don't, the window will
@@ -33,9 +34,9 @@ function createWindow () {
     slashes: true
   }))
 
-  //console.log('https://philadelphia-naming-test.herokuapp.com/'+'update/'+platform+'/'+version)
-  //autoUpdater.setFeedURL('https://philadelphia-naming-test.herokuapp.com/'+'update/'+platform+'/'+version);
-  //autoUpdater.checkForUpdates()
+  console.log('https://treated40.herokuapp.com/'+'update/'+platform+'/'+version)
+  autoUpdater.setFeedURL('https://treated40.herokuapp.com/'+'update/'+platform+'/'+version);
+  autoUpdater.checkForUpdates()
 
   // Open the DevTools.
   //mainWindow.webContents.openDevTools()
@@ -94,10 +95,10 @@ app.on('ready', createWindow)
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
+  exec('killall ffmpeg')
   if (process.platform !== 'darwin') {
     app.quit()
   }
-  exec('killall ffmpeg')
 })
 
 app.on('activate', function () {
@@ -116,41 +117,59 @@ autoUpdater.on('checking-for-update', function(){
 })
 autoUpdater.on('update-available', function(){
   console.log('update available, downloading now')
-  const availableNotification = notifier.notify('', {
-    message: "Update available. Downloading in the background now",
-    buttons: ['Ok'],
-    duration: 4000,
-    icon: path.join(__dirname, 'icon.png')
+  var dialogOptions = {
+    type: "question",
+    buttons: ["Cancel, Install"],
+    defaultId: 0,
+    title: "Install Update",
+    message: "Would you like to install the latest version now? If so, the app will download the new version and update itself. It will take a few min, depending on your network connection.",
+    cancelId: 1
+  }
+
+  dialog.showMessageBox(mainWindow, dialogOptions , function (response) {
+    updateResponse = response
+    if (response == 0) {
+
+    }
   })
-  availableNotification.on('buttonClicked', (text) => {
-    console.log(text)
-    availableNotification.close()
-  })
-  availableNotification.on('clicked', () => {
-    availableNotification.close()
-  })
-})
+//   const availableNotification = notifier.notify('', {
+//     message: "Update available. Downloading in the background now",
+//     buttons: ['Ok'],
+//     duration: 4000,
+//     icon: path.join(__dirname, 'icon.png')
+//   })
+//   availableNotification.on('buttonClicked', (text) => {
+//     console.log(text)
+//     availableNotification.close()
+//   })
+//   availableNotification.on('clicked', () => {
+//     availableNotification.close()
+//   })
+// })
 autoUpdater.on('update-not-available', function(){
   console.log('update not available')
 })
 autoUpdater.on('update-downloaded', function(){
-  console.log('update downloaded')
-  const updateNotification = notifier.notify('', {
-    message: "Update downloaded!",
-    buttons: ['Install', 'Cancel'],
-    duration: 20000,
-    icon: path.join(__dirname, 'icon.png')
-  })
-  updateNotification.on('buttonClicked', (text) => {
-    console.log(text)
-    if (text === 'Install') {
-      autoUpdater.quitAndInstall()
-    }
-    updateNotification.close()
-  })
-  updateNotification.on('clicked', () => {
-    updateNotification.close()
-  })
+  if (updateResponse == 0) {
+    autoUpdater.quitAndInstall()
+  }
+  // console.log('update downloaded')
+  // const updateNotification = notifier.notify('', {
+  //   message: "Update downloaded!",
+  //   buttons: ['Install', 'Cancel'],
+  //   duration: 20000,
+  //   icon: path.join(__dirname, 'icon.png')
+  // })
+  // updateNotification.on('buttonClicked', (text) => {
+  //   console.log(text)
+  //   if (text === 'Install') {
+  //     autoUpdater.quitAndInstall()
+  //   }
+  //   updateNotification.close()
+  // })
+  // updateNotification.on('clicked', () => {
+  //   updateNotification.close()
+  // })
 })
 
 // In this file you can include the rest of your app's specific main process
