@@ -22,8 +22,7 @@ var sys = {
 }
 var instructions = ["<h1>I'm going to ask you to name some pictures. <br>" +
                     "Each picture will appear on the computer screen. <br>" +
-                    "Your job is to name the picture using only one word. <br>" +
-                    "We'll practice several pictures before we begin </h1>"]
+                    "Your job is to name the picture using only one word. </h1>"]
 var beepSound = path.join(__dirname, 'assets', 'beep.wav')
 var exp = new experiment('treated40')
 // construct a new ffmpeg recording object
